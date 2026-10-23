@@ -1,0 +1,50 @@
+flowchart LR
+    J["🧒 Jugador<br/>(niño de 8 a 10 años)"]
+    D["👩‍🏫 Docente / Evaluador"]
+    A["🛠️ Administrador<br/>(equipo de desarrollo)"]
+
+    subgraph S["Sistema: Raíz de Óxido"]
+        direction TB
+        UC1(["Iniciar Modo Historia"])
+        UC2(["Ver cómic de introducción"])
+        UC3(["Responder evaluación<br/>inicial y final (ODS)"])
+        UC4(["Continuar partida guardada"])
+        UC5(["Explorar el valle con 141"])
+        UC6(["Hablar con personajes"])
+        UC7(["Enfrentar robots de Máximo"])
+        UC8(["Plantar núcleos de vida"])
+        UC9(["Jugar minijuego de la zona"])
+        UC10(["Obtener habilidad o llave"])
+        UC11(["Descansar y guardar<br/>en Punto de Descanso"])
+        UC12(["Consultar Enciclopedia"])
+        UC13(["Ver mapa y misiones"])
+        UC14(["Jugar Modo Minijuegos"])
+        UC15(["Ver estrellas y récords"])
+        UC16(["Configurar opciones<br/>(pantalla, velocidad de texto)"])
+        UC17(["Crear nuevo jugador"])
+        UC18(["Activar modo administrador"])
+        UC19(["Ver final y créditos"])
+    end
+
+    J --- UC1
+    J --- UC4
+    J --- UC5
+    J --- UC12
+    J --- UC13
+    J --- UC14
+    J --- UC16
+    D --- UC17
+    D --- UC3
+    A --- UC18
+
+    UC1 -.->|"«include»"| UC2
+    UC1 -.->|"«include»"| UC3
+    UC5 -.->|"«extend»"| UC6
+    UC5 -.->|"«extend»"| UC7
+    UC5 -.->|"«extend»"| UC8
+    UC5 -.->|"«extend»"| UC11
+    UC5 -.->|"«extend»"| UC9
+    UC9 -.->|"«include»"| UC10
+    UC14 -.->|"«include»"| UC9
+    UC14 -.->|"«include»"| UC15
+    UC8 -.->|"«extend»"| UC19

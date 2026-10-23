@@ -1,0 +1,161 @@
+classDiagram
+    direction TB
+
+    class Game {
+        +SceneManager scenes
+        +Profile profile
+        +GameState state
+        +Input input
+        +run()
+        +step(dt)
+        +save_all()
+    }
+    class SceneManager {
+        -list stack
+        +push(scene, kwargs)
+        +change(scene, kwargs)
+        +pop(result)
+        +top() Scene
+    }
+    class Scene {
+        <<abstract>>
+        +Game game
+        +on_enter()
+        +on_resume(result)
+        +handle_event(e)
+        +update(dt)
+        +draw(surf)
+        +close(result)
+    }
+    class Profile {
+        +dict data
+        +record(mg_id, ronda, estrellas, puntos) bool
+        +best(mg_id, ronda) int
+        +stars(mg_id, ronda) int
+        +unlock(entry_id) bool
+        +save()
+    }
+    class GameState {
+        +dict data
+        +give(cosa)
+        +set_flag(nombre)
+        +plant(core_id)
+        +save()
+    }
+    class MinigameSelectScene {
+        -list cards
+        +play(card)
+        +total_stars() int
+        +record_text(mg_id) str
+    }
+    class Minigame {
+        <<abstract>>
+        +str id
+        +dict data
+        +int round
+        +str mode
+        +str phase
+        +int score
+        +int errors
+        +setup()*
+        +start_play()
+        +play_event(e)*
+        +play_update(dt)*
+        +play_draw(surf)*
+        +good(puntos, entry)
+        +bad(mensaje, entry)
+        +show_fact()
+        +stars_for_errors(errores) int
+        +win()
+        +finish(ganó, estrellas)
+        +next_round()
+        +leave()
+    }
+    class DragDropMinigame {
+        <<abstract>>
+        +list~DragItem~ items
+        +list~DropTarget~ targets
+        +on_drop(item, target)*
+        +on_drop_nowhere(item)
+        +can_drag(item) bool
+    }
+    class CatcherMinigame {
+        <<abstract>>
+        +ObjectPool pool
+        +Rect basket
+        +spawn()
+        +on_catch(obj)*
+        +on_miss(obj)*
+    }
+    class ClickObjectsMinigame {
+        <<abstract>>
+        +list~ClickObject~ objects
+        +on_click(obj, pos)*
+        +on_click_empty(pos)
+        +object_at(pos) ClickObject
+    }
+    class DragItem {
+        +str id
+        +Rect rect
+        +bool locked
+        +place(pos)
+        +return_home()
+    }
+    class DropTarget {
+        +str id
+        +Rect rect
+        +str label
+        +bool active
+    }
+    class Falling {
+        +bool active
+        +Vector2 pos
+        +float vy
+        +reset(x, y, vy, data)
+    }
+    class ObjectPool {
+        +get() Falling
+        +release(obj)
+    }
+    class ClickObject {
+        +str id
+        +Rect rect
+        +bool active
+        +int angle
+    }
+
+    class TorreVida { <<ODS 15 · Oasis>> }
+    class Banda { <<ODS 12 · Vertedero>> }
+    class Detective { <<ODS 3 y 12 · Puertas de Acero>> }
+    class Reconecta { <<ODS 7 y 13 · Fábrica>> }
+    class Atrapalo { <<ODS 12 · Suburbios>> }
+    class Tuberia { <<ODS 6 · Río>> }
+    class Tortugas { <<ODS 14 · Costa>> }
+
+    Game *-- SceneManager
+    Game o-- Profile
+    Game o-- "0..1" GameState
+    SceneManager o-- "1..*" Scene : pila de escenas
+    Scene <|-- Minigame
+    Scene <|-- MinigameSelectScene
+    MinigameSelectScene ..> Minigame : crea con create_minigame()
+    Profile <.. Minigame : guarda estrellas
+    GameState <.. Minigame : registra victoria
+
+    Minigame <|-- DragDropMinigame
+    Minigame <|-- CatcherMinigame
+    Minigame <|-- ClickObjectsMinigame
+
+    DragDropMinigame *-- "0..*" DragItem
+    DragDropMinigame *-- "0..*" DropTarget
+    CatcherMinigame *-- ObjectPool
+    ObjectPool o-- "0..24" Falling
+    ClickObjectsMinigame *-- "0..*" ClickObject
+
+    DragDropMinigame <|-- TorreVida
+    DragDropMinigame <|-- Banda
+    DragDropMinigame <|-- Detective
+    DragDropMinigame <|-- Reconecta
+    CatcherMinigame <|-- Atrapalo
+    ClickObjectsMinigame <|-- Tuberia
+    ClickObjectsMinigame <|-- Tortugas
